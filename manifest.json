@@ -1,0 +1,26 @@
+{
+  "name": "sc-repeat-playlist",
+  "description": "Adding 'Repeat Playlist' feature to SoundCloud",
+  "version": "0.0.0",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://soundcloud.com/*"
+      ],
+      "js": [
+        "build/ext.bundle.js"
+      ],
+      "css": [],
+      "run_at": "document_end"
+    }
+  ],
+  "browser_action": {
+    "default_title": "SCRepeatPlaylist"
+  },
+  "permissions": [
+    "tabs", "storage",
+    "https://a-v2.sndcdn.com/*", "https://api.soundcloud.com/*"
+  ],
+  "web_accessible_resources": [],
+  "manifest_version": 2
+}
