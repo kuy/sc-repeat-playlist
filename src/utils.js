@@ -19,6 +19,7 @@ export function extractClientId(script) {
   return script.slice(start, end);
 }
 
+// TODO: Error handling
 export const getClientId = (() => {
   let clientId;
   return () => {
@@ -29,7 +30,6 @@ export const getClientId = (() => {
         for (let script of document.querySelectorAll('body > script[src]')) {
           const src = script.getAttribute('src');
           if (src.indexOf('assets/app-') !== -1) {
-            // TODO: Error handling
             get(src).then(js => {
               clientId = extractClientId(js);
               resolve(clientId);
@@ -49,8 +49,8 @@ export function toQueryString(obj) {
   return list.join('&');
 }
 
+// TODO: Error handling
 export function get(url, payload) {
-  // TODO: Error handling
   return new Promise((resolve, reject) => {
     if (typeof payload !== 'undefined') {
       if (typeof payload !== 'string' && typeof payload === 'object') {
@@ -84,4 +84,16 @@ export function resolve(url) {
       }).then(body => done(JSON.parse(body)), failed);
     });
   });
+}
+
+export function isPlaying(state) {
+  return !!state.player.playing;
+}
+
+export function isSameTrack(state, slug) {
+  return isPlaying(state) && state.player.playing.slug === slug;
+}
+
+export function isSamePlaylist(state, slug) {
+  return isPlaying(state) && state.player.playlist.slug === slug;
 }

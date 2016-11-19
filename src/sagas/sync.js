@@ -1,15 +1,13 @@
 import { delay } from 'redux-saga';
 import { fork, put, take, call, select } from 'redux-saga/effects';
-import { SYNC, sync, syncPlaying, syncPlaylist, syncTracks } from '../actions';
-import { determinePlaying, resolve } from '../utils';
+import { SYNC, sync, syncClear, syncUpdate } from '../actions';
+import { determinePlaying, resolve, isPlaying, isSameTrack, isSamePlaylist } from '../utils';
 
-function* syncState() {
+function* doSyncState() {
   const button = document.querySelector('.playControls .playControl.playing');
   if (!button) {
-    const current = yield select(state => state.player.playing);
-    if (current) {
-      console.log('playing', 'null');
-      yield put(syncPlaying(null));
+    if (isPlaying(yield select())) {
+      yield put(syncClear());
     }
     return;
   }
@@ -22,41 +20,43 @@ function* syncState() {
 
   const href = title.getAttribute('href');
   const { track, playlist } = determinePlaying(href);
+  // console.log('playing', [track, playlist]);
   if (!track) {
     console.warn('Could not track what is playing');
     return;
   }
 
-  let current = yield select(state => state.player.playing);
-  if (current && current.slug === track) {
-    return;
+  let changed = false,
+    state = yield select(),
+    player = state.player;
+
+  if (!isSameTrack(state, track)) {
+    changed = true;
+    const trackData = yield call(resolve, `https://soundcloud.com${track}`);
+    // console.log('track', trackData);
+    player = { ...player, playing: { id: trackData.id, slug: track } };
   }
 
-  console.log('playing', [track, playlist]);
-
-  const trackData = yield call(resolve, `https://soundcloud.com${track}`);
-  console.log('track', trackData);
-  yield put(syncPlaying({ id: trackData.id, slug: track }));
-  if (!playlist) {
-    yield put(syncPlaylist(null));
-    return;
+  if (!isSamePlaylist(state, playlist)) {
+    changed = true;
+    const playlistData = yield call(resolve, `https://soundcloud.com${playlist}`);
+    // console.log('playlist', playlistData);
+    player = {
+      ...player,
+      playlist: { id: playlistData.id, slug: playlist },
+      tracks: playlistData.tracks.map(t => t.id)
+    };
   }
 
-  current = yield select(state => state.player.playlist);
-  if (current && current.slug === playlist) {
-    return;
+  if (changed) {
+    yield put(syncUpdate(player));
   }
-
-  const playlistData = yield call(resolve, `https://soundcloud.com${playlist}`);
-  console.log('playlist', playlistData);
-  yield put(syncPlaylist({ id: playlistData.id, slug: playlist }));
-  yield put(syncTracks(playlistData.tracks.map(t => t.id)));
 }
 
 function* handleSync() {
   while (true) {
     yield take(SYNC);
-    yield call(syncState);
+    yield call(doSyncState);
   }
 }
 
