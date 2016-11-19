@@ -7,5 +7,7 @@ export const sync = createAction(SYNC);
 export const syncClear = createAction(SYNC_CLEAR);
 export const syncUpdate = createAction(SYNC_UPDATE);
 
+export const OUT_OF_PLAYLIST = 'OUT_OF_PLAYLIST';
 export const TOGGLE_REPEAT_MODE = 'TOGGLE_REPEAT_MODE';
+export const outOfPlaylist = createAction(OUT_OF_PLAYLIST);
 export const toggleRepeatMode = createAction(TOGGLE_REPEAT_MODE);

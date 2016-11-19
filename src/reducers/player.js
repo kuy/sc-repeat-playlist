@@ -14,6 +14,7 @@ export const initial = {
   playlist: null,
   tracks: [],
   repeat: 'NONE',
+  target: null,
   history: []
 };
 

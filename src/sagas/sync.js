@@ -30,6 +30,7 @@ function* doSyncState() {
     state = yield select(),
     player = state.player;
 
+  // NOTE: Resolving two resources can be done simultaneously
   if (!isSameTrack(state, track)) {
     changed = true;
     const trackData = yield call(resolve, `https://soundcloud.com${track}`);
@@ -63,11 +64,11 @@ function* handleSync() {
 function* triggerSync() {
   while (true) {
     yield put(sync());
-    yield call(delay, 5000);
+    yield call(delay, 1500);
   }
 }
 
-export default function* rootSaga() {
+export default function* syncSaga() {
   yield fork(triggerSync);
   yield fork(handleSync);
 }

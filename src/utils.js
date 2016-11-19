@@ -97,3 +97,26 @@ export function isSameTrack(state, slug) {
 export function isSamePlaylist(state, slug) {
   return isPlaying(state) && state.player.playlist.slug === slug;
 }
+
+export function isTrackInPlaylist(state) {
+  const { player: { playing, tracks } } = state;
+  return isPlaying(state) && tracks.indexOf(playing.id) !== -1;
+}
+
+export function getPrevPlaylist(state) {
+  const { player: { history } } = state;
+  const list = history.filter(h => !!h.playlist);
+  if (list.length === 0) {
+    return;
+  }
+  return list[list.length - 1].playlist;
+}
+
+export function isPlaylistChanged(state): bool {
+  const { player: { playlist } } = state;
+  const prev = getPrevPlaylist(state);
+  if (!playlist || !prev) {
+    return false;
+  }
+  return playlist.id !== prev.id;
+}
