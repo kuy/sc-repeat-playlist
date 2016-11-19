@@ -14,14 +14,28 @@ export const initial = {
   playlist: null,
   tracks: [],
   repeat: 'NONE',
+  history: []
 };
 
 export default function player(state = initial, { type, payload }) {
+  let cur;
   switch (type) {
     case SYNC_CLEAR:
-      return { ...state, playing: null, playlist: null, tracks: [] };
+      cur = { playing: state.playing, playlist: state.playlist, tracks: state.tracks };
+      return {
+        ...state,
+        playing: null,
+        playlist: null,
+        tracks: [],
+        history: [ ...state.history, cur ],
+      };
     case SYNC_UPDATE:
-      return { ...state, ...payload };
+      cur = { playing: state.playing, playlist: state.playlist, tracks: state.tracks };
+      return {
+        ...state,
+        ...payload,
+        history: [ ...state.history, cur ],
+      };
     case TOGGLE_REPEAT_MODE:
       return { ...state, repeat: nextRepeatMode(state.repeat) };
   }
