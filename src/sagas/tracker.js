@@ -5,7 +5,9 @@ import { isPlaylistChanged } from '../utils';
 function* detectOutOfPlaylist() {
   while (true) {
     yield take(SYNC_UPDATE);
-    if (isPlaylistChanged(yield select())) {
+    const state = yield select();
+    const { player: { repeat } } = state;
+    if (repeat === 'playlist' && isPlaylistChanged(state)) {
       yield put(outOfPlaylist());
     }
   }

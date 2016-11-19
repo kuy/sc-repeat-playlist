@@ -38,7 +38,14 @@ export default function player(state = initial, { type, payload }) {
         history: [ ...state.history, cur ],
       };
     case TOGGLE_REPEAT_MODE:
-      return { ...state, repeat: nextRepeatMode(state.repeat) };
+      const next = nextRepeatMode(state.repeat);
+      let target;
+      if (next === 'playlist') {
+        target = state.playlist;
+      } else {
+        target = null;
+      }
+      return { ...state, repeat: next, target };
   }
   return state;
 }
