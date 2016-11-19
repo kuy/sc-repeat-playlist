@@ -4,13 +4,9 @@
   "version": "0.0.0",
   "content_scripts": [
     {
-      "matches": [
-        "https://soundcloud.com/*"
-      ],
-      "js": [
-        "build/ext.bundle.js"
-      ],
-      "css": [],
+      "matches": ["https://soundcloud.com/*"],
+      "js": ["build/ext.bundle.js"],
+      "css": ["assets/main.css"],
       "run_at": "document_end"
     }
   ],
@@ -21,6 +17,8 @@
     "tabs", "storage",
     "https://a-v2.sndcdn.com/*", "https://api.soundcloud.com/*"
   ],
-  "web_accessible_resources": [],
+  "web_accessible_resources": [
+    "assets/*"
+  ],
   "manifest_version": 2
 }

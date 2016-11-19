@@ -1,0 +1,15 @@
+.repeatControl.scrp:before {
+  background-image:url('chrome-extension://__MSG_@@extension_id__/assets/repeat-none.svg');
+  opacity: .75;
+}
+.repeatControl.m-track.scrp:before {
+  background-image:url('chrome-extension://__MSG_@@extension_id__/assets/repeat-track.svg');
+  opacity: 1;
+}
+.repeatControl.m-playlist.scrp:before {
+  background-image:url('chrome-extension://__MSG_@@extension_id__/assets/repeat-playlist.svg');
+  opacity: 1;
+}
+.repeatControl.scrp:after {
+  opacity: 0;
+}

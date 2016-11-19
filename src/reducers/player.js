@@ -3,9 +3,9 @@ import { SYNC_CLEAR, SYNC_UPDATE, TOGGLE_REPEAT_MODE } from '../actions';
 
 function nextRepeatMode(mode) {
   switch (mode) {
-    case 'NONE': return 'TRACK';
-    case 'TRACK': return 'PLAYLIST';
-    case 'PLAYLIST': return 'NONE';
+    case 'none': return 'track';
+    case 'track': return 'playlist';
+    case 'playlist': return 'none';
   }
 }
 
@@ -13,7 +13,7 @@ export const initial = {
   playing: null,
   playlist: null,
   tracks: [],
-  repeat: 'NONE',
+  repeat: 'none',
   target: null,
   history: []
 };
