@@ -6,8 +6,11 @@ import { determinePlaying, resolve } from '../utils';
 function* syncState() {
   const button = document.querySelector('.playControls .playControl.playing');
   if (!button) {
-    console.log('playing', 'null');
-    yield put(syncPlaying(null));
+    const current = yield select(state => state.player.playing);
+    if (current) {
+      console.log('playing', 'null');
+      yield put(syncPlaying(null));
+    }
     return;
   }
 

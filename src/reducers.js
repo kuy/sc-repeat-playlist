@@ -18,6 +18,7 @@ const initial = {
   },
 };
 
+// NOTE: SYNC_PLAYING, SYNC_PLAYLIST, SYNC_TRACKS should be merged.
 function player(state = initial.player, { type, payload }) {
   switch (type) {
     case SYNC_PLAYING:
