@@ -1,37 +1,32 @@
 import { fork, take } from 'redux-saga/effects';
 import { OUT_OF_PLAYLIST } from '../actions';
+import $ from 'cash-dom';
 
 function* handleOutOfPlaylist() {
   while (true) {
     const { payload: playlist } = yield take(OUT_OF_PLAYLIST);
     const links = document.querySelectorAll(`a[href="${playlist}"]`);
     if (!links || links.length === 0) {
-      console.warn(`No links: ${playlist}`);
+      console.warn(`No playlist links: ${playlist}`);
       continue;
     }
 
     let button;
     for (const link of links) {
-      let header, current = link;
-      while (current.parentNode) {
-        current = current.parentNode;
-        if (current && current.nodeType === 1 && current.getAttribute('class') === 'sound__header') {
-          header = current;
-          break;
-        }
-      }
-
-      if (!header) {
+      const $header = $(link).parents('.sound__header, .audibleTile');
+      if ($header.length === 0) {
         continue;
       }
 
-      button = header.querySelector('button.sc-button-play.sc-button-xlarge');
-      if (button) {
+      const $buttons = $header.find('button.sc-button-play');
+      if (0 < $buttons.length) {
+        button = $buttons.get(0);
         break;
       }
     }
 
     if (!button) {
+      console.warn(`No play button: ${playlist}`);
       continue;
     }
 
