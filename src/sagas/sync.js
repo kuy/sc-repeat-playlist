@@ -1,74 +1,83 @@
-import { delay } from 'redux-saga';
+import { delay, eventChannel } from 'redux-saga';
 import { fork, put, take, call, select } from 'redux-saga/effects';
-import { SYNC, sync, syncClear, syncUpdate } from '../actions';
+import { syncChangePlayState, syncChangeTrack, syncChangePlaylist } from '../actions';
 import { determinePlaying, resolve, isPlaying, isSameTrack, isSamePlaylist } from '../utils';
+import $ from 'cash-dom';
 
-function* doSyncState() {
-  const button = document.querySelector('.playControls .playControl.playing');
-  if (!button) {
-    if (isPlaying(yield select())) {
-      yield put(syncClear());
+function* createObserver(selector, options, valueFn) {
+  // Wait until target element is shown
+  let $target;
+  while (true) {
+    $target = $(selector);
+    if (0 < $target.length) {
+      break;
     }
-    return;
+
+    // TODO: Enable timeout to avoid inifinite loop
+    yield call(delay, 500);
   }
 
-  const title = document.querySelector('.playControls .playbackSoundBadge__title');
-  if (!title) {
-    console.warn('Could not find title element');
-    return;
-  }
+  return eventChannel(emit => {
+    let last;
+    const observer = new MutationObserver(() => {
+      if (typeof valueFn === 'function') {
+        const value = valueFn($target);
+        // Emit only if value is changed
+        if (last !== value) {
+          emit(last = value);
+        }
+      } else {
+        emit($target);
+      }
+    });
 
-  const href = title.getAttribute('href');
-  const { track, playlist } = determinePlaying(href);
-  // console.log('playing', [track, playlist]);
-  if (!track) {
-    console.warn('Could not track what is playing');
-    return;
-  }
+    // Start observing target
+    observer.observe($target.get(0), options);
 
-  let changed = false,
-    state = yield select(),
-    player = state.player;
-
-  // NOTE: Resolving two resources can be done simultaneously
-  if (!isSameTrack(state, track)) {
-    changed = true;
-    const trackData = yield call(resolve, `https://soundcloud.com${track}`);
-    // console.log('track', trackData);
-    player = { ...player, playing: { id: trackData.id, slug: track } };
-  }
-
-  if (!isSamePlaylist(state, playlist)) {
-    changed = true;
-    const playlistData = yield call(resolve, `https://soundcloud.com${playlist}`);
-    // console.log('playlist', playlistData);
-    player = {
-      ...player,
-      playlist: { id: playlistData.id, slug: playlist },
-      tracks: playlistData.tracks.map(t => t.id)
+    return () => {
+      observer.disconnect();
     };
-  }
+  });
+}
 
-  if (changed) {
-    yield put(syncUpdate(player));
+function* watchPlayState() {
+  const ch = yield call(
+    createObserver,
+    '.playControls .playControls__playPauseSkip > button:nth-child(2)',
+    { attributes: true, attributeFilter: ['class'] },
+    $target => $target.hasClass('playing')
+  );
+
+  while (true) {
+    const play = yield take(ch);
+    console.log('play', play);
+    yield put(syncChangePlayState(play));
   }
 }
 
-function* handleSync() {
-  while (true) {
-    yield take(SYNC);
-    yield call(doSyncState);
-  }
-}
+function* watchCurrentTrack() {
+  const ch = yield call(
+    createObserver,
+    '.playControls .playControls__soundBadge .playbackSoundBadge',
+    { childList: true, subtree: true },
+    $target => $target.find('.playbackSoundBadge__title').attr('href')
+  );
 
-function* triggerSync() {
   while (true) {
-    yield put(sync());
-    yield call(delay, 1500);
+    const href = yield take(ch);
+    console.log('track', href);
+    const [ curTrack, curPlaylist ] = yield select(state => ([ state.player.track, state.player.playlist ]));
+    const { track, playlist } = determinePlaying(href);
+    if (curTrack !== track) {
+      yield put(syncChangeTrack(track));
+    }
+    if (curPlaylist !== playlist) {
+      yield put(syncChangePlaylist(playlist));
+    }
   }
 }
 
 export default function* syncSaga() {
-  yield fork(triggerSync);
-  yield fork(handleSync);
+  yield fork(watchPlayState);
+  yield fork(watchCurrentTrack);
 }

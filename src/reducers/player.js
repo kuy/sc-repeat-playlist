@@ -1,5 +1,8 @@
 import { combineReducers } from 'redux';
-import { SYNC_CLEAR, SYNC_UPDATE, TOGGLE_REPEAT_MODE } from '../actions';
+import {
+  SYNC_CHANGE_PLAY_STATE, SYNC_CHANGE_TRACK, SYNC_CHANGE_PLAYLIST,
+  TOGGLE_REPEAT_MODE
+} from '../actions';
 
 function nextRepeatMode(mode) {
   switch (mode) {
@@ -10,42 +13,23 @@ function nextRepeatMode(mode) {
 }
 
 export const initial = {
-  playing: null,
+  play: false,
+  track: null,
   playlist: null,
-  tracks: [],
   repeat: 'none',
-  target: null,
-  history: []
 };
 
 export default function player(state = initial, { type, payload }) {
-  let cur;
   switch (type) {
-    case SYNC_CLEAR:
-      cur = { playing: state.playing, playlist: state.playlist, tracks: state.tracks };
-      return {
-        ...state,
-        playing: null,
-        playlist: null,
-        tracks: [],
-        history: [ ...state.history, cur ],
-      };
-    case SYNC_UPDATE:
-      cur = { playing: state.playing, playlist: state.playlist, tracks: state.tracks };
-      return {
-        ...state,
-        ...payload,
-        history: [ ...state.history, cur ],
-      };
+    case SYNC_CHANGE_PLAY_STATE:
+      return { ...state, play: payload };
+    case SYNC_CHANGE_TRACK:
+      return { ...state, track: payload };
+    case SYNC_CHANGE_PLAYLIST:
+      return { ...state, playlist: payload };
     case TOGGLE_REPEAT_MODE:
       const next = nextRepeatMode(state.repeat);
-      let target;
-      if (next === 'playlist') {
-        target = state.playlist;
-      } else {
-        target = null;
-      }
-      return { ...state, repeat: next, target };
+      return { ...state, repeat: next };
   }
   return state;
 }

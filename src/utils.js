@@ -7,7 +7,7 @@ export function determinePlaying(href) {
       playlist: '/' + href.slice(start + mark.length)
     };
   } else {
-    return { track: href };
+    return { track: href, playlist: null };
   }
 }
 
