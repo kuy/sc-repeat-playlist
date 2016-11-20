@@ -1,7 +1,7 @@
 {
   "name": "SoundCloud Repeat Playlist",
   "description": "Adding 'Repeat Playlist' feature to SoundCloud",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "content_scripts": [
     {
       "matches": ["https://soundcloud.com/*"],
@@ -12,6 +12,11 @@
   ],
   "browser_action": {
     "default_title": "SCRepeatPlaylist"
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
   },
   "permissions": [
     "tabs", "storage",
