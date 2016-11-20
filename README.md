@@ -25,8 +25,10 @@ Please don't forget to load unpacked Chrome extension.
 ### Build Chrome extension
 
 ```
-$ npm run build:ext
+$ npm run build:dist
 ```
+
+Chrome extension will be packed under `./dist` directory.
 
 ## Author
 

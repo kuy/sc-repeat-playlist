@@ -4,9 +4,10 @@
   "scripts": {
     "start": "./node_modules/.bin/webpack --watch",
     "build": "./node_modules/.bin/webpack",
-    "build:ext": "npm run build && npm run build:ext:dist && npm run build:ext:pack",
-    "build:ext:dist": "node tools/dist.js",
-    "build:ext:pack": "node tools/pack.js",
+    "build:dist": "npm run build && npm run build:setup && npm run build:crx && npm run build:zip",
+    "build:setup": "node tools/setup.js",
+    "build:crx": "node tools/pack-crx.js",
+    "build:zip": "node tools/pack-zip.js",
     "flow": "./node_modules/.bin/flow; test $? -eq 0 -o $? -eq 2"
   },
   "repository": {
