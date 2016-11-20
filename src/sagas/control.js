@@ -1,5 +1,5 @@
-import { fork, take } from 'redux-saga/effects';
-import { OUT_OF_PLAYLIST } from '../actions';
+import { fork, take, select, call } from 'redux-saga/effects';
+import { OUT_OF_PLAYLIST, TOGGLE_REPEAT_MODE } from '../actions';
 import $ from 'cash-dom';
 
 function* handleOutOfPlaylist() {
@@ -11,35 +11,45 @@ function* handleOutOfPlaylist() {
       continue;
     }
 
-    let button;
+    let $button;
     for (const link of links) {
       const $header = $(link).parents('.sound__header, .audibleTile');
       if ($header.length === 0) {
         continue;
       }
 
-      const $buttons = $header.find('button.sc-button-play');
-      if (0 < $buttons.length) {
-        button = $buttons.get(0);
+      $button = $header.find('button.sc-button-play').first();
+      if (0 < $button.length) {
         break;
       }
     }
 
-    if (!button) {
+    if ($button.length === 0) {
       console.warn(`No play button: ${playlist}`);
       continue;
     }
 
-    const event = new MouseEvent('click', {
-      view: window,
-      bubbles: true,
-      cancelable: true,
-    });
+    $button.trigger('click');
+  }
+}
 
-    button.dispatchEvent(event);
+function toggleRepeat(newState) {
+  const $button = $('.playControls .playControls__repeat button.repeatControl').not('.scrp').first();
+  const state = $button.is('.m-one');
+  if (state !== newState) {
+    $button.trigger('click');
+  }
+}
+
+function* handleToggleRepeatMode() {
+  while (true) {
+    yield take(TOGGLE_REPEAT_MODE);
+    const repeat = yield select(state => state.player.repeat);
+    yield call(toggleRepeat, repeat === 'track')
   }
 }
 
 export default function* controlSaga() {
   yield fork(handleOutOfPlaylist);
+  yield fork(handleToggleRepeatMode);
 }
