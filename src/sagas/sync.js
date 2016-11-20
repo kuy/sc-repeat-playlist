@@ -1,7 +1,11 @@
 import { delay, eventChannel } from 'redux-saga';
 import { fork, put, take, call, select } from 'redux-saga/effects';
-import { syncChangePlayState, syncChangeTrack, syncChangePlaylist } from '../actions';
-import { determinePlaying, resolve, isPlaying, isSameTrack, isSamePlaylist } from '../utils';
+import {
+  syncChangePlayState,
+  syncChangeTrack, syncChangeTrackBefore,
+  syncChangePlaylist, syncChangePlaylistBefore
+} from '../actions';
+import { determinePlaying } from '../utils';
 import $ from 'cash-dom';
 
 function* createObserver(selector, options, valueFn) {
@@ -69,9 +73,11 @@ function* watchCurrentTrack() {
     const [ curTrack, curPlaylist ] = yield select(state => ([ state.player.track, state.player.playlist ]));
     const { track, playlist } = determinePlaying(href);
     if (curTrack !== track) {
+      yield put(syncChangeTrackBefore(curTrack));
       yield put(syncChangeTrack(track));
     }
     if (curPlaylist !== playlist) {
+      yield put(syncChangePlaylistBefore(curPlaylist));
       yield put(syncChangePlaylist(playlist));
     }
   }

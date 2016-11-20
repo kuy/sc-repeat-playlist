@@ -1,17 +1,12 @@
-import { fork, put, take, call, select } from 'redux-saga/effects';
+import { fork, take } from 'redux-saga/effects';
 import { OUT_OF_PLAYLIST } from '../actions';
 
 function* handleOutOfPlaylist() {
   while (true) {
-    yield take(OUT_OF_PLAYLIST);
-    const { playlist, target } = yield select(state => state.player);
-    if (playlist.id === target.id) {
-      continue;
-    }
-
-    const links = document.querySelectorAll(`a[href="${target.slug}"]`);
+    const { payload: playlist } = yield take(OUT_OF_PLAYLIST);
+    const links = document.querySelectorAll(`a[href="${playlist}"]`);
     if (!links || links.length === 0) {
-      console.warn(`No links: ${target.slug}`);
+      console.warn(`No links: ${playlist}`);
       continue;
     }
 
@@ -20,7 +15,6 @@ function* handleOutOfPlaylist() {
       let header, current = link;
       while (current.parentNode) {
         current = current.parentNode;
-        // console.log('current', current);
         if (current && current.nodeType === 1 && current.getAttribute('class') === 'sound__header') {
           header = current;
           break;
@@ -41,15 +35,12 @@ function* handleOutOfPlaylist() {
       continue;
     }
 
-    // console.log('button', button);
-
     const event = new MouseEvent('click', {
       view: window,
       bubbles: true,
       cancelable: true,
     });
 
-    // console.log('event', event);
     button.dispatchEvent(event);
   }
 }
