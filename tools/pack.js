@@ -1,10 +1,13 @@
-var zip = require('zip-dir');
-var EXCLUDE = ['node_modules', '.git', 'README.md', '.DS_Store', 'src', 'webpack.config.js', 'package.json', 'tools', '.babelrc'];
+var exec = require('child_process').exec;
+var path = require('path');
 
-console.log('Packing Chrome extension...');
+var bin = '"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"';
+var args = [
+  '--pack-extension=' + path.join(__dirname, '../dist'),
+  '--pack-extension-key=' + path.join(process.env.HOME, '.ssh/sc-repeat-playlist-crx.pem'),
+];
 
-zip('.', { saveTo: '../sc-repeat-playlist-extension.zip', filter: (path, stat) =>
-  !(EXCLUDE.map(name => path.indexOf(name) !== -1).reduce((p, b) => p || b, false))
-}, () => {
+console.log('Packing extension...');
+exec([bin].concat(args).join(' '), () => {
   console.log('Done');
 });

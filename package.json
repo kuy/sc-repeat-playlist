@@ -4,7 +4,8 @@
   "scripts": {
     "start": "./node_modules/.bin/webpack --watch",
     "build": "./node_modules/.bin/webpack",
-    "build:ext": "npm run build && npm run build:ext:pack",
+    "build:ext": "npm run build && npm run build:ext:dist && npm run build:ext:pack",
+    "build:ext:dist": "node tools/dist.js",
     "build:ext:pack": "node tools/pack.js",
     "flow": "./node_modules/.bin/flow; test $? -eq 0 -o $? -eq 2"
   },
@@ -33,6 +34,7 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-2": "^6.18.0",
     "flow-bin": "^0.35.0",
+    "fs-extra": "^1.0.0",
     "webpack": "^1.13.3",
     "zip-dir": "^1.0.2"
   }

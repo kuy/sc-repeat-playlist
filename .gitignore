@@ -1,6 +1,7 @@
 # Application
 node_modules
 build
+dist
 
 ## vim
 
