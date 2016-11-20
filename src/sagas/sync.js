@@ -54,7 +54,7 @@ function* watchPlayState() {
 
   while (true) {
     const play = yield take(ch);
-    console.log('play', play);
+    // console.log('play', play);
     yield put(syncChangePlayState(play));
   }
 }
@@ -69,7 +69,7 @@ function* watchCurrentTrack() {
 
   while (true) {
     const href = yield take(ch);
-    console.log('track', href);
+    // console.log('track', href);
     const [ curTrack, curPlaylist ] = yield select(state => ([ state.player.track, state.player.playlist ]));
     const { track, playlist } = determinePlaying(href);
     if (curTrack !== track) {
