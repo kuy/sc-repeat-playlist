@@ -1,4 +1,18 @@
+// @flow
+
 import { createAction } from 'redux-actions';
+
+export type Action = {
+  type: ActionType,
+  payload?: any,
+  meta?: any,
+};
+
+type ActionType =
+  'SYNC_CHANGE_PLAY_STATE' |
+  'SYNC_CHANGE_TRACK' | 'SYNC_CHANGE_TRACK_BEFORE' |
+  'SYNC_CHANGE_PLAYLIST' | 'SYNC_CHANGE_PLAYLIST_BEFORE' |
+  'OUT_OF_PLAYLIST' | 'TOGGLE_REPEAT_MODE';
 
 export const SYNC_CHANGE_PLAY_STATE = 'SYNC_CHANGE_PLAY_STATE';
 export const SYNC_CHANGE_TRACK = 'SYNC_CHANGE_TRACK';

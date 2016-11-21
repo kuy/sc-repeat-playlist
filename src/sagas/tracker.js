@@ -1,12 +1,16 @@
+// @flow
+
+import type { IOEffect } from 'redux-saga/effects';
+import type { State } from '../reducers/index';
 import { fork, put, take, select } from 'redux-saga/effects';
 import { SYNC_CHANGE_PLAYLIST, SYNC_CHANGE_PLAYLIST_BEFORE, outOfPlaylist } from '../actions';
 
-function* detectOutOfPlaylist() {
+function* detectOutOfPlaylist(): Generator<IOEffect,void,*> {
   let target;
   while (true) {
     // Get target playlist before changing it
     const { payload: playlist } = yield take(SYNC_CHANGE_PLAYLIST_BEFORE);
-    const repeat = yield select(state => state.player.repeat);
+    const repeat = yield select((state: State) => state.player.repeat);
     if (repeat !== 'playlist') {
       continue;
     }
@@ -22,6 +26,6 @@ function* detectOutOfPlaylist() {
   }
 }
 
-export default function* trackerSaga() {
+export default function* trackerSaga(): Generator<IOEffect,void,*> {
   yield fork(detectOutOfPlaylist);
 }

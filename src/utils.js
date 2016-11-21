@@ -1,4 +1,11 @@
-export function determinePlaying(href) {
+// @flow
+
+type Playing = {
+  track: string,
+  playlist: ?string,
+};
+
+export function determinePlaying(href: string): Playing {
   const mark = '?in=';
   const start = href.indexOf(mark);
   if (start !== -1) {

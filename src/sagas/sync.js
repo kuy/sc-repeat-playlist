@@ -1,3 +1,7 @@
+// @flow
+
+import type { IOEffect, Channel } from 'redux-saga/effects';
+import type { State } from '../reducers/index';
 import { delay, eventChannel } from 'redux-saga';
 import { fork, put, take, call, select } from 'redux-saga/effects';
 import {
@@ -8,7 +12,7 @@ import {
 import { determinePlaying } from '../utils';
 import $ from 'cash-dom';
 
-function* createObserver(selector, options, valueFn) {
+function* createObserver(selector, options: Object, valueFn?: Function): Generator<IOEffect,Channel,*> {
   // Wait until target element is shown
   let $target;
   while (true) {
@@ -44,7 +48,7 @@ function* createObserver(selector, options, valueFn) {
   });
 }
 
-function* watchPlayState() {
+function* watchPlayState(): Generator<IOEffect,void,*> {
   const ch = yield call(
     createObserver,
     '.playControls .playControls__playPauseSkip > button:nth-child(2)',
@@ -59,7 +63,7 @@ function* watchPlayState() {
   }
 }
 
-function* watchCurrentTrack() {
+function* watchCurrentTrack(): Generator<IOEffect,void,*> {
   const ch = yield call(
     createObserver,
     '.playControls .playControls__soundBadge .playbackSoundBadge',
@@ -70,7 +74,7 @@ function* watchCurrentTrack() {
   while (true) {
     const href = yield take(ch);
     // console.log('track', href);
-    const [ curTrack, curPlaylist ] = yield select(state => ([ state.player.track, state.player.playlist ]));
+    const [ curTrack, curPlaylist ] = yield select((state: State) => ([ state.player.track, state.player.playlist ]));
     const { track, playlist } = determinePlaying(href);
     if (curTrack !== track) {
       yield put(syncChangeTrackBefore(curTrack));
@@ -83,7 +87,7 @@ function* watchCurrentTrack() {
   }
 }
 
-export default function* syncSaga() {
+export default function* syncSaga(): Generator<IOEffect,void,*> {
   yield fork(watchPlayState);
   yield fork(watchCurrentTrack);
 }

@@ -1,8 +1,11 @@
+// @flow
+
 import { combineReducers } from 'redux';
 import {
   SYNC_CHANGE_PLAY_STATE, SYNC_CHANGE_TRACK, SYNC_CHANGE_PLAYLIST,
   TOGGLE_REPEAT_MODE
 } from '../actions';
+import type { Action } from '../actions';
 
 function nextRepeatMode(mode) {
   switch (mode) {
@@ -12,14 +15,21 @@ function nextRepeatMode(mode) {
   }
 }
 
-export const initial = {
+export type PlayerState = {
+  play: bool,
+  track: ?string,
+  playlist: ?string,
+  repeat: string,
+};
+
+export const initial: PlayerState = {
   play: false,
   track: null,
   playlist: null,
   repeat: 'none',
 };
 
-export default function player(state = initial, { type, payload }) {
+export default function player(state: PlayerState = initial, { type, payload }: Action): PlayerState {
   switch (type) {
     case SYNC_CHANGE_PLAY_STATE:
       return { ...state, play: payload };
