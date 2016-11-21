@@ -255,7 +255,7 @@ declare module 'redux-saga/effects' {
   declare type FnSpread<T, R> = (...args: Array<T>) => Promise<R>;
 
   declare type Fn0<R> = () => Promise<R> | Generator<*,R,*>;
-  declare type Fn1<T1, R> = (t1: T1) => Promise<R> | Generator<*,R,*>;
+  declare type Fn1<T1, R> = (t1: T1) => void | Promise<R> | Generator<*,R,*>;
   declare type Fn2<T1, T2, R> = (t1: T1, t2: T2) => Promise<R> | Generator<*,R,*>;
   declare type Fn3<T1, T2, T3, R> = (t1: T1, t2: T2, t3: T3) => Promise<R> | Generator<*,R,*>;
   declare type Fn4<T1, T2, T3, T4, R> = (t1: T1, t2: T2, t3: T3, t4: T4) => Promise<R> | Generator<*,R,*>;
