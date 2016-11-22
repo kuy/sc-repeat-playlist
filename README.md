@@ -23,6 +23,20 @@ The repeat button repeats the following modes.
 2. Repeat track
 3. Repeat playlist
 
+### Supported Pages
+
+This is a list of pages that are confirmed to work.
+
++ /you/sets
++ /<username>/sets
+
+### Unsupported Pages
+
+Will be supported soon!
+
++ /you/sets/<name>
++ /<username>/sets/<name>
+
 
 ## Development
 
