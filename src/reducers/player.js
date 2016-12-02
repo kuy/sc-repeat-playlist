@@ -7,19 +7,22 @@ import {
 } from '../actions';
 import type { Action } from '../actions';
 
-function nextRepeatMode(mode) {
+type RepeatMode = 'none' | 'track' | 'playlist';
+
+function nextRepeatMode(mode: RepeatMode): RepeatMode {
   switch (mode) {
     case 'none': return 'track';
     case 'track': return 'playlist';
     case 'playlist': return 'none';
   }
+  throw new Error(`Invalid repeat mode: ${mode}`);
 }
 
 export type PlayerState = {
   play: bool,
   track: ?string,
   playlist: ?string,
-  repeat: string,
+  repeat: RepeatMode,
 };
 
 export const initial: PlayerState = {
